@@ -1,10 +1,15 @@
 class ChessPiece
-  attr_reader :unicode
+  attr_reader :unicode, :white
   attr_accessor :position
 
-  def initialize(unicode = "", position = {x: 0, y: 0})
+  def initialize(position = {x: 0, y: 0}, unicode = "", white = true)
     @unicode = unicode
     @position = position
+    @white = white
+  end
+
+  def move(x, y)
+    @position = {x: x, y: y}
   end
 
   def horizontal_move?(x, y)
