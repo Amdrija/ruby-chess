@@ -24,6 +24,11 @@ class Square
     piece.white == @piece.white
   end
 
+  def occupied_by_different_color?(piece)
+    return false unless occupied?
+    piece.white != @piece.white
+  end
+
   private
   def occupied?
     !@piece.nil?
