@@ -9,11 +9,6 @@ class Square
   end
 
   def occupy(piece)
-    unless occupied?
-      @piece = piece
-      return nil
-    end
-
     eaten_piece = @piece
     @piece = piece
     eaten_piece
@@ -29,7 +24,6 @@ class Square
     piece.white != @piece.white
   end
 
-  private
   def occupied?
     !@piece.nil?
   end
