@@ -3,7 +3,7 @@ require './lib/chess_piece.rb'
 class Rook < ChessPiece
   attr_reader :castling
   def initialize(square, white = true)
-    unicode = white ? '\u2656' : '\u265c'
+    unicode = white ? "\u2656" : "\u265c"
     super(square, unicode, white)
     @castling = true
   end

@@ -2,7 +2,7 @@ require './lib/chess_piece.rb'
 
 class Knight < ChessPiece
   def initialize(square, white = true)
-    unicode = white ? '\u2658' : '\u265e'
+    unicode = white ? "\u2658" : "\u265e"
     super(square, unicode, white)
   end
 

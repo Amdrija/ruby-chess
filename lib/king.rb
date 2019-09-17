@@ -3,7 +3,7 @@ require './lib/chess_piece.rb'
 class King < ChessPiece
   attr_accessor :castling
   def initialize(square, white = true)
-    unicode = white ? '\u2654' : '\u265a'
+    unicode = white ? "\u2654" : "\u265a"
     super(square, unicode, white)
     @castling = true
   end
