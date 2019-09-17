@@ -60,7 +60,7 @@ RSpec.describe Pawn do
       expect(pawn.move_valid?(new_square)).to eql(true)
     end
 
-    it "Returns true if the white pawn can move from 2,2 to 3,3 and eat a black pawn" do
+    it "Returns true if the white pawn can move from 2,2 to 3,3 and eat a black piece" do
       square = instance_double("Square", position: { x: 2, y: 2})
       allow(square).to receive(:occupy).and_return(nil)
       new_square = instance_double("Square", position: {x: 3, y: 3})
@@ -70,7 +70,7 @@ RSpec.describe Pawn do
       expect(pawn.move_valid?(new_square)).to eql(true)
     end
 
-    it "Returns true if the white pawn can move from 2,2 to 3,1 and eat a black pawn" do
+    it "Returns true if the white pawn can move from 2,2 to 3,1 and eat a black piece" do
       square = instance_double("Square", position: { x: 2, y: 2})
       allow(square).to receive(:occupy).and_return(nil)
       new_square = instance_double("Square", position: {x: 1, y: 3})
@@ -80,7 +80,7 @@ RSpec.describe Pawn do
       expect(pawn.move_valid?(new_square)).to eql(true)
     end
 
-    it "Returns true if the black pawn can move from 2,2 to 3,1 and eat a white pawn" do
+    it "Returns true if the black pawn can move from 2,2 to 3,1 and eat a white piece" do
       square = instance_double("Square", position: { x: 2, y: 2})
       allow(square).to receive(:occupy).and_return(nil)
       new_square = instance_double("Square", position: {x: 3, y: 1})
@@ -90,7 +90,7 @@ RSpec.describe Pawn do
       expect(pawn.move_valid?(new_square)).to eql(true)
     end
 
-    it "Returns true if the black pawn can move from 2,2 to 1,1 and eat a white pawn" do
+    it "Returns true if the black pawn can move from 2,2 to 1,1 and eat a white piece" do
       square = instance_double("Square", position: { x: 2, y: 2})
       allow(square).to receive(:occupy).and_return(nil)
       new_square = instance_double("Square", position: {x: 1, y: 1})
