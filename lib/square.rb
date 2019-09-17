@@ -27,4 +27,9 @@ class Square
   def occupied?
     !@piece.nil?
   end
+
+  def to_s
+    return "   " if @piece.nil?
+    " #{@piece.unicode} "
+  end
 end

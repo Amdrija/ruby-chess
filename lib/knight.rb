@@ -1,4 +1,4 @@
-require 'chess_piece.rb'
+require './lib/chess_piece.rb'
 
 class Knight < ChessPiece
   def initialize(square, white = true)

@@ -1,4 +1,4 @@
-require 'chess_piece.rb'
+require './lib/chess_piece.rb'
 
 class King < ChessPiece
   attr_accessor :castling

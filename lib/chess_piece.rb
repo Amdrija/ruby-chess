@@ -1,4 +1,4 @@
-require 'square.rb'
+require './lib/square.rb'
 class ChessPiece
   attr_reader :unicode, :white
   attr_accessor :square

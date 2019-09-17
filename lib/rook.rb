@@ -1,4 +1,4 @@
-require 'chess_piece.rb'
+require './lib/chess_piece.rb'
 
 class Rook < ChessPiece
   attr_reader :castling
