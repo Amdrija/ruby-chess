@@ -65,5 +65,13 @@ RSpec.describe Queen do
       queen = Queen.new(square_start)
       expect(queen.move_valid?(square_end)).to eql(true)
     end
+
+    it 'Return false if the queen can\'t move from 4,4 to 7,2' do
+      square_start = instance_double('Square', position: { x: 4, y: 4 })
+      allow(square_start).to receive(:occupy).and_return(nil)
+      square_end = instance_double('Square', position: { x: 7, y: 2})
+      queen = Queen.new(square_start)
+      expect(queen.move_valid?(square_end)).to eql(false)
+    end
   end
 end
