@@ -11,6 +11,7 @@ class ChessPiece
   end
 
   def move(square)
+    @square.piece = nil
     @square = square
     square.occupy(self)
   end

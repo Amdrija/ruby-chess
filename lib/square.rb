@@ -1,11 +1,13 @@
 # Square class
 class Square
-  attr_reader :piece, :position, :white
+  attr_reader :position, :white
+  attr_accessor :check, :piece
 
   def initialize(position = { x: 0, y: 0 }, piece = nil, white = true)
     @position = position
     @piece = piece
     @white = white
+    @check = false
   end
 
   def occupy(piece)
@@ -28,8 +30,15 @@ class Square
     !@piece.nil?
   end
 
+  def occupied_by_king?
+    return false unless occupied?
+
+    @piece.class == 'King'
+  end
+
   def to_s
-    return "   " if @piece.nil?
+    return '   ' if @piece.nil?
+
     " #{@piece.unicode} "
   end
 end

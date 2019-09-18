@@ -51,7 +51,8 @@ class Pawn < ChessPiece
   end
 
   def opening_move?(new_square)
-    return false if !@opening_move
+    return false if !@opening_move || new_square.occupied?
+
     if @white
       return new_square.position[:x] == @square.position[:x] &&
           new_square.position[:y] == @square.position[:y] + 2

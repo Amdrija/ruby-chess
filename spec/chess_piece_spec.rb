@@ -3,23 +3,23 @@ require 'chess_piece.rb'
 RSpec.describe ChessPiece do
   describe '#move(square)' do
     it 'Moves the piece from 0,0 to 7,0' do
-      square_start = instance_double('Square', position: { x: 0, y: 0 }, piece: nil, white: true)
-      allow(square_start).to receive(:occupy).and_return(nil)
+      square_start = Square.new({ x: 0, y: 0 })
       square_end = instance_double('Square', position: { x: 7, y: 0 }, piece: nil, white: true)
       allow(square_end).to receive(:occupy).and_return(nil)
       piece = ChessPiece.new(square_start)
       piece.move(square_end)
       expect(piece.square.position).to eql({ x: 7, y: 0 })
+      expect(square_start.piece).to eql(nil)
     end
 
     it 'Moves the piece from 1,4 to 6,1' do
-      square_start = instance_double('Square', position: { x: 1, y: 4 }, piece: nil, white: true)
-      allow(square_start).to receive(:occupy).and_return(nil)
+      square_start = Square.new({ x: 1, y: 4 })
       square_end = instance_double('Square', position: { x: 6, y: 1 }, piece: nil, white: true)
       allow(square_end).to receive(:occupy).and_return(nil)
       piece = ChessPiece.new(square_start)
       piece.move(square_end)
       expect(piece.square.position).to eql({ x: 6, y: 1 })
+      expect(square_start.piece).to eql(nil)
     end
   end
 

@@ -53,14 +53,14 @@ RSpec.describe Rook do
 
   describe "#move(new_square)" do
     it "Moves the rook from 0,0 to 0,5 and sets @castling to false" do
-      square_start = instance_double('Square', position: { x: 0, y: 0 })
-      allow(square_start).to receive(:occupy).and_return(nil)
+      square_start = Square.new({ x: 0, y: 0 })
       square_end = instance_double('Square', position: { x: 0, y: 5 })
       allow(square_end).to receive(:occupy).and_return(nil)
       rook = Rook.new(square_start)
       expect(rook.move(square_end)).to eql(nil)
       expect(rook.castling).to eql(false)
       expect(rook.square.position).to eql({ x: 0, y: 5 })
+      expect(square_start.piece).to eql(nil)
     end
   end
 end

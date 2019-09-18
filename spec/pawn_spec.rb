@@ -3,14 +3,14 @@ require 'pawn.rb'
 RSpec.describe Pawn do
   describe '#move(new_square)' do
     it "Returns nil if the 0,0 square isn't occupied and moves the pawn to that square" do
-      square_start = instance_double('Square', position: { x: 0, y: 0 }, piece: nil, white: true)
-      allow(square_start).to receive(:occupy).and_return(nil)
+      square_start = Square.new({ x: 0, y: 0 })
       square_end = instance_double('Square', position: { x: 0, y: 1 }, piece: nil, white: true)
       allow(square_end).to receive(:occupy).and_return(nil)
       pawn = Pawn.new(square_start)
       expect(pawn.move(square_end)).to eql(nil)
       expect(pawn.square.position).to eql({ x: 0, y: 1 })
       expect(pawn.opening_move).to eql(false)
+      expect(square_start.piece).to eql(nil)
     end
   end
 
