@@ -33,7 +33,7 @@ class Square
   def occupied_by_king?
     return false unless occupied?
 
-    @piece.class == 'King'
+    @piece.class == King
   end
 
   def to_s

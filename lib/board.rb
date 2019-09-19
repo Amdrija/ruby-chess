@@ -37,11 +37,13 @@ class Board
 
     return false unless square_start.piece.move_valid?(square_end)
 
-    return true if square_start.piece.class == Pawn ||
-        square_start.piece.class == King ||
-        square_start.piece.class == Knight
 
-    !blocks?(square_start, square_end)
+    return false if square_start.piece.class != Pawn &&
+        square_start.piece.class != King &&
+        square_start.piece.class != Knight &&
+        blocks?(square_start, square_end)
+
+    !future_check(square_start, square_end)
   end
 
   def parse_board_for_check(white)
@@ -52,7 +54,70 @@ class Board
     end
   end
 
+  def check?(white)
+    king = find_king(white)
+    king.square.checked
+  end
+
+  def checkmate?(white)
+    check?(white) && stalemate?(white)
+  end
+
+  def stalemate?(white)
+    pieces = white ? @white_pieces : @black_pieces
+    king = find_king(white)
+    @squares.each do |row|
+      row.each do |square|
+        pieces.each do |piece|
+          if move_valid?(piece.square, square)
+            return false
+          end
+        end
+      end
+    end
+    true
+  end
+
   private
+
+  def remove_piece(piece)
+    return nil if piece.nil?
+    pieces = piece.white ? @white_pieces : @black_pieces
+    pieces.delete(piece)
+  end
+
+  def add_piece(piece)
+    pieces = piece.white ? @white_pieces : @black_pieces
+    pieces.push(piece)
+  end
+
+  def future_check(square_start, square_end)
+    end_piece = square_end.piece
+    piece = square_start.piece
+    piece.move(square_end)
+    remove_piece(end_piece)
+    parse_board_for_check(!piece.white)
+    future_check = check?(piece.white)
+    piece.move(square_start)
+
+    unless end_piece.nil?
+      add_piece(end_piece)
+      end_piece.square = square_end
+      square_end.piece = end_piece
+    end
+
+    future_check
+  end
+
+  def possible_moves(white)
+    possible_moves = 0
+    pieces = white ? @white_pieces : @black_pieces
+  end
+
+  def find_king(white)
+    pieces = white ? @white_pieces : @black_pieces
+    pieces.find {|piece| piece.class == King}
+  end
 
   def reset_square_checks
     squares.each do |row|
@@ -63,23 +128,40 @@ class Board
   end
 
   def blocks?(square_start, square_end)
-    horizontal_step, vertical_step = *direction(square_start,square_end)
+    horizontal_step, vertical_step = *direction(square_start, square_end)
 
     return sub_diagonal_blocks?(square_start, square_end) if vertical_step == -1
 
     position_y = square_end.position[:y]
     position_x = square_end.position[:x]
 
-    while position_y <= square_start.position[:y] && position_x <= square_start.position[:x]
-      return true if @squares[position_y][position_x].occupied? && @squares[position_y][position_x] != square_start
+    eating_end_square_piece = true
+    while position_y <= square_start.position[:y] && position_x <= square_start.position[:x] &&
+        !(position_y == square_start.position[:y] && position_x == square_start.position[:x])
 
+      if @squares[position_y][position_x].occupied?
+        return true if @squares[position_y][position_x].piece.white == square_start.piece.white
+
+        return true if !eating_end_square_piece
+
+      end
+
+      eating_end_square_piece = false
       position_x += horizontal_step
       position_y += vertical_step
     end
 
-    while position_y >= square_start.position[:y] && position_x >= square_start.position[:x]
-      return true if @squares[position_y][position_x].occupied? && @squares[position_y][position_x] != square_start
+    while position_y >= square_start.position[:y] && position_x >= square_start.position[:x] &&
+        !(position_y == square_start.position[:y] && position_x == square_start.position[:x])
 
+      if @squares[position_y][position_x].occupied?
+        return true if @squares[position_y][position_x].piece.white == square_start.piece.white
+
+        return true if !eating_end_square_piece
+
+      end
+
+      eating_end_square_piece = false
       position_x -= horizontal_step
       position_y -= vertical_step
     end
@@ -103,19 +185,33 @@ class Board
     position_y = square_end.position[:y]
     position_x = square_end.position[:x]
 
+    eating_end_square_piece = true
     while position_y < square_start.position[:y] && position_x > square_start.position[:x]
-      return true if @squares[position_y][position_x].occupied?
+      if @squares[position_y][position_x].occupied?
+        return true if @squares[position_y][position_x].piece.white == square_start.piece.white
 
+        return true if !eating_end_square_piece
+
+      end
+
+      eating_end_square_piece = false
       position_x -= 1
       position_y += 1
     end
 
     while position_y > square_start.position[:y] && position_x < square_start.position[:x]
-      return true if @squares[position_y][position_x].occupied?
+      if @squares[position_y][position_x].occupied?
+        return true if @squares[position_y][position_x].piece.white == square_start.piece.white
 
+        return true if !eating_end_square_piece
+
+      end
+
+      eating_end_square_piece = false
       position_x += 1
       position_y -= 1
     end
+
     false
   end
 
@@ -164,6 +260,3 @@ class Board
     end
   end
 end
-
-b = Board.new
-b.display

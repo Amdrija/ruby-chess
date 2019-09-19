@@ -5,8 +5,6 @@ RSpec.describe Board do
     it "Sets all square's :checked that are attacked on the opening turn to true" do
       board = Board.new
       board.parse_board_for_check(true)
-
-
       3.times do |y|
         8.times do |x|
           #nobody is attacking the squares with white rooks at the opening turn
@@ -61,6 +59,88 @@ RSpec.describe Board do
     it "Return true if Knight can move from 1,0 to 0,2" do
       board = Board.new
       expect(board.move_valid?(board.squares[0][1], board.squares[2][0])).to eql(true)
+    end
+
+    it "Return false if white Bishop can't move from 4,1 to 3,2 due to it protecting king from check" do
+      board = Board.new
+      board.squares[7][0].piece.move(board.squares[4][4]) #black rook from h0 to e4
+      board.squares[1][4].piece.move(board.squares[3][3]) #white pawn from b4 to d4
+      board.squares[0][5].piece.move(board.squares[1][4]) #white bishop from a5 to b4
+      #board.display
+      expect(board.move_valid?(board.squares[1][4], board.squares[2][3])).to eql(false)
+    end
+
+    it "Return true if white Rook can move from 4,1 to 4,4" do
+      board = Board.new
+      board.squares[7][0].piece.move(board.squares[4][4]) #black rook from h0 to e4
+      board.squares[1][4].piece.move(board.squares[3][3]) #white pawn from b4 to d4
+      board.squares[0][0].piece.move(board.squares[1][4]) #white rook from a0 to e4
+      #board.display
+      expect(board.move_valid?(board.squares[1][4], board.squares[4][4])).to eql(true)
+    end
+
+    it "Return false if King can't move from 4,0 to 3,1" do
+      board = Board.new
+      expect(board.move_valid?(board.squares[0][4], board.squares[1][3])).to eql(false)
+    end
+  end
+
+  describe "#stalemate?(white)" do
+    it "Return false if there isn't stalemate on opening move" do
+      board = Board.new
+      expect(board.stalemate?(true)).to eql(false)
+    end
+
+    it "Return true if there is stalemate" do
+      board = Board.new
+      board.squares[1][3].piece.move(board.squares[2][3])
+      board.squares[0][3].piece.move(board.squares[2][7])
+      board.squares[7][5].piece.move(board.squares[4][0])
+      board.squares[1][2].piece.move(board.squares[3][2])
+      board.squares[1][1].piece.move(board.squares[5][1])
+      board.squares[0][2].piece.move(board.squares[0][3])
+      board.squares[0][1].piece.move(board.squares[5][1])
+      expect(board.stalemate?(true)).to eql(true)
+    end
+
+    it "Return false if there is stalemate, the horse on 1, 2 can eat the bishop on 4, 0" do
+      board = Board.new
+      board.squares[1][3].piece.move(board.squares[2][3])
+      board.squares[0][3].piece.move(board.squares[2][7])
+      board.squares[7][5].piece.move(board.squares[4][0])
+      board.squares[1][2].piece.move(board.squares[3][2])
+      board.squares[1][1].piece.move(board.squares[5][1])
+      board.squares[0][2].piece.move(board.squares[0][3])
+      board.squares[0][1].piece.move(board.squares[2][1])
+      expect(board.stalemate?(true)).to eql(false)
+    end
+  end
+
+  describe "#checkmate?(white)" do
+    it "Return false if there isn't checkmate on opening move" do
+      board = Board.new
+      expect(board.checkmate?(true)).to eql(false)
+    end
+
+    it "Return true if there is checkmate" do
+      board = Board.new
+      board.squares[1][3].piece.move(board.squares[2][3])
+      board.squares[0][3].piece.move(board.squares[2][7])
+      board.squares[7][5].piece.move(board.squares[4][0])
+      board.squares[1][2].piece.move(board.squares[3][2])
+      board.squares[1][1].piece.move(board.squares[5][1])
+      board.squares[0][2].piece.move(board.squares[0][3])
+      board.squares[0][1].piece.move(board.squares[5][1])
+      board.parse_board_for_check(false)
+      expect(board.checkmate?(true)).to eql(true)
+    end
+
+    it "Return false if there is check but not checkmate" do
+      board = Board.new
+      board.squares[1][3].piece.move(board.squares[2][3])
+      board.squares[7][5].piece.move(board.squares[4][0])
+      board.parse_board_for_check(false)
+      expect(board.checkmate?(true)).to eql(false)
     end
   end
 end
