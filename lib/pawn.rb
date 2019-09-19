@@ -21,6 +21,18 @@ class Pawn < ChessPiece
     # TODO: add move for en_passant
   end
 
+  def check(squares)
+    vertical_step = white ? 1 : -1
+    horizontal_steps = [-1, 1]
+
+    horizontal_steps.each do |horizontal_step|
+      new_x = @square.position[:x] + horizontal_step
+      new_y = @square.position[:y] + vertical_step
+
+      squares[new_y][new_x].checked = true if coordinates_valid?(new_x, new_y)
+    end
+  end
+
   private
   def eating_move?(new_square)
     new_square.occupied_by_different_color?(self) && diagonal_move?(new_square)

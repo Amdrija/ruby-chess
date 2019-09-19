@@ -1,13 +1,13 @@
 # Square class
 class Square
   attr_reader :position, :white
-  attr_accessor :check, :piece
+  attr_accessor :checked, :piece
 
   def initialize(position = { x: 0, y: 0 }, piece = nil, white = true)
     @position = position
     @piece = piece
     @white = white
-    @check = false
+    @checked = false
   end
 
   def occupy(piece)

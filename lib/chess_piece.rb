@@ -27,4 +27,8 @@ class ChessPiece
   def diagonal_move?(position_x, position_y)
     (square.position[:x] - position_x).abs == (square.position[:y] - position_y).abs
   end
+
+  def coordinates_valid?(x, y)
+    x >= 0 && x <= 7 && y >= 0 && y <= 7
+  end
 end

@@ -1,6 +1,43 @@
 require 'pawn.rb'
 
 RSpec.describe Pawn do
+  describe '#check(squares)' do
+    it "Sets all square's :checked that are attacked by a white pawn on 1,0 to true" do
+      squares = []
+      8.times do |i|
+        squares.push([])
+        8.times do |j|
+          squares[i].push(Square.new({ x: j, y: i }))
+        end
+      end
+      pawn = Pawn.new(squares[0][1], true)
+      pawn.check(squares)
+      expect(squares[1][1].checked).to eql(false)
+      expect(squares[0][0].checked).to eql(false)
+      expect(squares[0][2].checked).to eql(false)
+      expect(squares[1][2].checked).to eql(true)
+      expect(squares[1][0].checked).to eql(true)
+      expect(squares[4][4].checked).to eql(false)
+      expect(squares[0][1].checked).to eql(false)
+    end
+
+    it "Sets all square's :checked that are attacked by a white pawn on 0,0 to true" do
+      squares = []
+      8.times do |i|
+        squares.push([])
+        8.times do |j|
+          squares[i].push(Square.new({ x: j, y: i }))
+        end
+      end
+      pawn = Pawn.new(squares[0][0], true)
+      pawn.check(squares)
+      expect(squares[1][0].checked).to eql(false)
+      expect(squares[0][0].checked).to eql(false)
+      expect(squares[0][1].checked).to eql(false)
+      expect(squares[1][1].checked).to eql(true)
+      expect(squares[4][4].checked).to eql(false)
+    end
+  end
   describe '#move(new_square)' do
     it "Returns nil if the 0,0 square isn't occupied and moves the pawn to that square" do
       square_start = Square.new({ x: 0, y: 0 })

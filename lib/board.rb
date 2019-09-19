@@ -44,10 +44,26 @@ class Board
     !blocks?(square_start, square_end)
   end
 
+  def parse_board_for_check(white)
+    reset_square_checks
+    pieces = white ? @white_pieces : @black_pieces
+    pieces.each do |piece|
+      piece.check(@squares)
+    end
+  end
+
   private
 
+  def reset_square_checks
+    squares.each do |row|
+      row.each do |square|
+        square.checked = false
+      end
+    end
+  end
+
   def blocks?(square_start, square_end)
-    horizontal_step, vertical_step,  = *direction(square_start,square_end)
+    horizontal_step, vertical_step = *direction(square_start,square_end)
 
     return sub_diagonal_blocks?(square_start, square_end) if vertical_step == -1
 
