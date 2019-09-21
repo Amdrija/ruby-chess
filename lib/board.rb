@@ -78,7 +78,39 @@ class Board
     true
   end
 
+  def pawn_promotion(white)
+    last_row = white ? 7 : 0
+    pieces = white ? @white_pieces : @black_pieces
+    pawns = pieces.filter {|piece| piece.class == Pawn}
+    pawns.each do |pawn|
+      if pawn.square.position[:y] == last_row
+        case get_promotion_letter
+        when 'Q'
+          pieces << Queen.new(pawn.square, white)
+        when 'K'
+          pieces << Knight.new(pawn.square, white)
+        when 'B'
+          pieces << Bishop.new(pawn.square, white)
+        when 'R'
+          pieces << Rook.new(pawn.square, white)
+        else
+          puts "Error, you can only promote to a Queen, Rook, Bishop or Knight"
+        end
+      end
+    end
+  end
+
   private
+
+  def get_promotion_letter
+    puts "You can promote the pawn to a queen, knight, bishop or rook."
+    puts "Type Q for Queen, K for Knight, B for Bishop or R for Rook."
+    letter = gets.chomp.upcase
+    while letter.length != 1 && !letter.match?(/[QKBR]/)
+      letter = gets.chomp.upcase
+    end
+    letter
+  end
 
   def remove_piece(piece)
     return nil if piece.nil?

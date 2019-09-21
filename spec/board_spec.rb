@@ -143,4 +143,47 @@ RSpec.describe Board do
       expect(board.checkmate?(true)).to eql(false)
     end
   end
+
+  describe "#pawn_promotion(white)" do
+    it "Promotes the white pawn that is on the last row to a queen" do
+      board = Board.new
+      board.squares[1][0].piece.move(board.squares[7][0])
+      allow_any_instance_of(Object).to receive(:gets).and_return "q\n"
+      board.pawn_promotion(true)
+      expect(board.squares[7][0].piece.class).to eql(Queen)
+    end
+
+    it "Promotes the black pawn that is on the last row to a knight" do
+      board = Board.new
+      board.squares[6][0].piece.move(board.squares[0][0])
+      allow_any_instance_of(Object).to receive(:gets).and_return "k\n"
+      board.pawn_promotion(false)
+      expect(board.squares[0][0].piece.class).to eql(Knight)
+    end
+
+    it "Promotes the white pawn that is on the last row to a bishop" do
+      board = Board.new
+      board.squares[1][3].piece.move(board.squares[7][1])
+      allow_any_instance_of(Object).to receive(:gets).and_return "B\n"
+      board.pawn_promotion(true)
+      expect(board.squares[7][1].piece.class).to eql(Bishop)
+    end
+
+    it "Promotes the black pawn that is on the last row to a rook" do
+      board = Board.new
+      board.squares[1][3].piece.move(board.squares[7][1])
+      allow_any_instance_of(Object).to receive(:gets).and_return "r\n"
+      board.pawn_promotion(true)
+      expect(board.squares[7][1].piece.class).to eql(Rook)
+    end
+
+    it "Doesn't promote any pawns at the opening turn" do
+      board = Board.new
+      allow_any_instance_of(Object).to receive(:gets).and_return "r\n"
+      board.pawn_promotion(true)
+      8. times do |i|
+        expect(board.squares[1][i].piece.class).to eql(Pawn)
+      end
+    end
+  end
 end
