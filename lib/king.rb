@@ -25,7 +25,7 @@ class King < ChessPiece
   end
 
   def move_valid?(new_square)
-    return false if new_square.checked || new_square.occupied?
+    return false if new_square.checked || (new_square.occupied? && new_square.piece.white == self.white)
     x_distance = (new_square.position[:x] - @square.position[:x]).abs
     y_distance = (new_square.position[:y] - @square.position[:y]).abs
     x_distance <= 1 && y_distance <= 1

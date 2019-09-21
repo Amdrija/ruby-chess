@@ -17,6 +17,7 @@ class Board
     reset_board
     reset_pieces(true)
     reset_pieces(false)
+    @eaten_pieces = []
   end
 
   def display
@@ -44,6 +45,19 @@ class Board
         blocks?(square_start, square_end)
 
     !future_check(square_start, square_end)
+  end
+
+  def move(square_start, square_end)
+    eaten_piece = square_start.piece.move(square_end)
+    @eaten_pieces << eaten_piece unless eaten_piece.nil?
+  end
+
+  def display_eaten_pieces
+    string = ""
+    @eaten_pieces.each do |piece|
+      string += "#{piece}, "
+    end
+    puts string
   end
 
   def parse_board_for_check(white)

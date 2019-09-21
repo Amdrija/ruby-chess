@@ -31,4 +31,8 @@ class ChessPiece
   def coordinates_valid?(x, y)
     x >= 0 && x <= 7 && y >= 0 && y <= 7
   end
+
+  def to_s
+    @unicode
+  end
 end
