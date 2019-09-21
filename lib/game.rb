@@ -58,13 +58,13 @@ class Game
 
   def checkmate_message(white)
     player = white ? 'White' : 'Black'
-    puts "Checkmate"
+    puts 'Checkmate'
     puts "#{player} player wins!"
   end
 
   def stale_mate_message
-    puts "Stalemate."
-    puts "The game ends in a draw."
+    puts 'Stalemate.'
+    puts 'The game ends in a draw.'
   end
 
   def check_message(white)
@@ -73,9 +73,9 @@ class Game
   end
 
   def get_move(white)
-    puts "Put the coordinated of the piece you want to move."
-    puts "For example A4"
-    coord = ""
+    puts 'Put the coordinated of the piece you want to move.'
+    puts 'For example A4'
+    coord = ''
     position_x = 0
     position_y = 0
     loop do
@@ -84,9 +84,10 @@ class Game
         position_x, position_y = *chess_to_decart_coordinates(coord)
         if !@board.squares[position_y][position_x].piece.nil?
           break if @board.squares[position_y][position_x].piece.white == white
+
           puts "That piece isn't your color, try again."
         else
-          puts "That square is empty."
+          puts 'That square is empty.'
         end
       else
         puts "Those coordinates don't exist, try again."
@@ -94,17 +95,19 @@ class Game
     end
 
     square_start = @board.squares[position_y][position_x]
-    puts "Put the coordinates where you want to move the piece."
+    puts 'Put the coordinates where you want to move the piece.'
     loop do
       coord = gets.chomp.upcase
       break if coordinates_valid(coord)
+
       puts "Those coordinates don't exist, try again."
     end
 
     position_x, position_y = *chess_to_decart_coordinates(coord)
     square_end = @board.squares[position_y][position_x]
-    unless @board.move_valid?(square_start, square_end)
-      puts "That move is not possible, try again."
+
+    unless @board.castling?(square_start, square_end) || @board.move_valid?(square_start, square_end)
+      puts 'That move is not possible, try again.'
       square_start, square_end = *get_move(white)
     end
     [square_start, square_end]

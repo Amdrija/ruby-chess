@@ -21,8 +21,8 @@ class Board
   end
 
   def display
-    system("clear")
-    puts "   0  1  2  3  4  5  6  7"
+    system('clear')
+    puts '   0  1  2  3  4  5  6  7'
     @squares.each_with_index do |row, i|
       print "#{("A".ord + i).chr} "
       row.each do |square|
@@ -40,24 +40,62 @@ class Board
 
 
     return false if square_start.piece.class != Pawn &&
-        square_start.piece.class != King &&
-        square_start.piece.class != Knight &&
-        blocks?(square_start, square_end)
+                    square_start.piece.class != King &&
+                    square_start.piece.class != Knight &&
+                    blocks?(square_start, square_end)
 
     !future_check(square_start, square_end)
   end
 
   def move(square_start, square_end)
+    # if it's the castling move
+    if square_start.piece.class == King && (square_start.position[:x] - square_end.position[:x]).abs > 1
+      position_y = square_start.position[:y]
+      king_x = square_start.position[:x]
+
+      horizontal_direction = square_end.position[:x] - king_x
+      horizontal_direction = horizontal_direction.positive? ? 1 : -1
+      rook_x = horizontal_direction.positive? ? 7 : 0
+      rook = @squares[position_y][rook_x].piece
+
+      rook.move(@squares[position_y][king_x + horizontal_direction])
+    end
+
     eaten_piece = square_start.piece.move(square_end)
     @eaten_pieces << eaten_piece unless eaten_piece.nil?
   end
 
   def display_eaten_pieces
-    string = ""
+    string = ''
     @eaten_pieces.each do |piece|
       string += "#{piece}, "
     end
     puts string
+  end
+
+
+  def castling?(square_start, square_end)
+    return false if square_start.position[:y] != square_end.position[:y]
+    return false if square_start.piece.class != King
+    return false unless square_start.piece.castling
+
+    position_y = square_start.position[:y]
+    king_x = square_start.position[:x]
+
+    horizontal_direction = square_end.position[:x] - king_x
+    rook_x = horizontal_direction.positive? ? 7 : 0
+
+    return false if @squares[position_y][rook_x].piece.class != Rook
+
+    rook = @squares[position_y][rook_x].piece
+    return false unless rook.castling
+
+    king = square_start.piece
+    ((king.square.position[:x] - rook_x).abs - 1).times do |x|
+      return false if @squares[position_y][king_x + horizontal_direction].occupied? ||
+                      (x < 2 && @squares[position_y][king_x + horizontal_direction].checked)
+    end
+    true
   end
 
   def parse_board_for_check(white)
@@ -79,13 +117,10 @@ class Board
 
   def stalemate?(white)
     pieces = white ? @white_pieces : @black_pieces
-    king = find_king(white)
     @squares.each do |row|
       row.each do |square|
         pieces.each do |piece|
-          if move_valid?(piece.square, square)
-            return false
-          end
+          return false if move_valid?(piece.square, square)
         end
       end
     end
@@ -97,28 +132,28 @@ class Board
     pieces = white ? @white_pieces : @black_pieces
     pawns = pieces.filter {|piece| piece.class == Pawn}
     pawns.each do |pawn|
-      if pawn.square.position[:y] == last_row
-        case get_promotion_letter
-        when 'Q'
-          pieces << Queen.new(pawn.square, white)
-        when 'K'
-          pieces << Knight.new(pawn.square, white)
-        when 'B'
-          pieces << Bishop.new(pawn.square, white)
-        when 'R'
-          pieces << Rook.new(pawn.square, white)
-        else
-          puts "Error, you can only promote to a Queen, Rook, Bishop or Knight"
-        end
+      next unless pawn.square.position[:y] == last_row
+
+      case promotion_letter
+      when 'Q'
+        pieces << Queen.new(pawn.square, white)
+      when 'K'
+        pieces << Knight.new(pawn.square, white)
+      when 'B'
+        pieces << Bishop.new(pawn.square, white)
+      when 'R'
+        pieces << Rook.new(pawn.square, white)
+      else
+        puts 'Error, you can only promote to a Queen, Rook, Bishop or Knight'
       end
     end
   end
 
   private
 
-  def get_promotion_letter
-    puts "You can promote the pawn to a queen, knight, bishop or rook."
-    puts "Type Q for Queen, K for Knight, B for Bishop or R for Rook."
+  def promotion_letter
+    puts 'You can promote the pawn to a queen, knight, bishop or rook.'
+    puts 'Type Q for Queen, K for Knight, B for Bishop or R for Rook.'
     letter = gets.chomp.upcase
     while letter.length != 1 && !letter.match?(/[QKBR]/)
       letter = gets.chomp.upcase
@@ -128,6 +163,7 @@ class Board
 
   def remove_piece(piece)
     return nil if piece.nil?
+
     pieces = piece.white ? @white_pieces : @black_pieces
     pieces.delete(piece)
   end
@@ -155,11 +191,6 @@ class Board
     future_check
   end
 
-  def possible_moves(white)
-    possible_moves = 0
-    pieces = white ? @white_pieces : @black_pieces
-  end
-
   def find_king(white)
     pieces = white ? @white_pieces : @black_pieces
     pieces.find {|piece| piece.class == King}
@@ -183,12 +214,12 @@ class Board
 
     eating_end_square_piece = true
     while position_y <= square_start.position[:y] && position_x <= square_start.position[:x] &&
-        !(position_y == square_start.position[:y] && position_x == square_start.position[:x])
+          !(position_y == square_start.position[:y] && position_x == square_start.position[:x])
 
       if @squares[position_y][position_x].occupied?
         return true if @squares[position_y][position_x].piece.white == square_start.piece.white
 
-        return true if !eating_end_square_piece
+        return true unless eating_end_square_piece
 
       end
 
@@ -198,12 +229,12 @@ class Board
     end
 
     while position_y >= square_start.position[:y] && position_x >= square_start.position[:x] &&
-        !(position_y == square_start.position[:y] && position_x == square_start.position[:x])
+          !(position_y == square_start.position[:y] && position_x == square_start.position[:x])
 
       if @squares[position_y][position_x].occupied?
         return true if @squares[position_y][position_x].piece.white == square_start.piece.white
 
-        return true if !eating_end_square_piece
+        return true unless eating_end_square_piece
 
       end
 
@@ -236,7 +267,7 @@ class Board
       if @squares[position_y][position_x].occupied?
         return true if @squares[position_y][position_x].piece.white == square_start.piece.white
 
-        return true if !eating_end_square_piece
+        return true unless eating_end_square_piece
 
       end
 
@@ -249,7 +280,7 @@ class Board
       if @squares[position_y][position_x].occupied?
         return true if @squares[position_y][position_x].piece.white == square_start.piece.white
 
-        return true if !eating_end_square_piece
+        return true unless eating_end_square_piece
 
       end
 
@@ -261,7 +292,7 @@ class Board
     false
   end
 
-  #if the coordinates of square is x, y, then we access that square with squares[y][x]
+  # if the coordinates of square is x, y, then we access that square with squares[y][x]
   def reset_board
     @squares = []
     8.times do |i|
