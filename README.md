@@ -9,6 +9,9 @@ Afterwards just type:
 
     ruby lib/game.rb
 in terminal.
+
+## Repl.it
+There is an online version as well. It is hosted on Repl.it on this [link](https://repl.it/@Amdrija/RubyChess), however, the chessboard isn't even because of the limitation of printing unicode characters in Repl.it console. To fix this you could try modifying the CSS properties in your browsers developer tools, but I still haven't found settings that could help with this.
 ## Features
 You play by typing in the field of the chess piece you want to move and where you want to move it.
 I am yet to implement game save and game load feature and the en_passant move.

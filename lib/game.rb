@@ -6,6 +6,8 @@ class Game
   end
 
   def reset
+    welcome_message
+
     if @board.nil?
       @board = Board.new
     else
@@ -13,6 +15,16 @@ class Game
     end
 
     play
+  end
+
+  def welcome_message
+    puts
+    puts "Welcome to the Ruby Chess game."
+    puts "White pieces have a white outline and aren't filled."
+    puts "Black pieces have white color fill."
+    puts "Enjoy your game!"
+    puts "Press Enter key to continue."
+    gets
   end
 
   def play
